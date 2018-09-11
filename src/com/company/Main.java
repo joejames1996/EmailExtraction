@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,8 @@ public class Main
         //int count = countValidSoftwireEmails(file);
         //System.out.println(sub + ": " + count + " times.");
         addEmailsToMap(file);
-        printEmailMap();
+        sortEmailMap();
+        printEmailMap(10);
     }
 
     static String loadSampleFile() throws IOException
@@ -86,9 +86,42 @@ public class Main
 
     static void printEmailMap()
     {
+        printEmailMap(-1);
+    }
+
+    static void printEmailMap(int count)
+    {
+        int i = 0;
         for(String s : emailMap.keySet())
         {
             System.out.println(s + " appears " + emailMap.get(s) + " times.");
+            i++;
+            if(i == count) break;
         }
+    }
+
+    static void sortEmailMap()
+    {
+        List<Integer> countList = new LinkedList<>();
+        for(Integer i : emailMap.values())
+        {
+            countList.add(i);
+        }
+        Collections.sort(countList);
+        Collections.reverse(countList);
+
+        Map<String, Integer> newMap = new LinkedHashMap<>();
+        for(Integer i : countList)
+        {
+            for(Map.Entry<String, Integer> e : emailMap.entrySet())
+            {
+                if(e.getValue() == i)
+                {
+                    newMap.put(e.getKey(), e.getValue());
+                    break;
+                }
+            }
+        }
+        emailMap = newMap;
     }
 }
