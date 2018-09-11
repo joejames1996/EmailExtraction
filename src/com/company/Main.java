@@ -1,6 +1,9 @@
 package com.company;
 
+import javax.swing.text.html.parser.Parser;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,8 +21,11 @@ public class Main
 
     static Map<String, Integer> emailMap = new HashMap();
 
+    static int lowestCount = 0;
+
     public static void main(String[] args) throws IOException
     {
+        getLowestCount();
         String file = loadSampleFile();
         //int count = countInString(file);
         //int count = countValidSoftwireEmails(file);
@@ -27,6 +33,14 @@ public class Main
         addEmailsToMap(file);
         sortEmailMap();
         printEmailMap(10);
+    }
+
+    static void getLowestCount() throws IOException
+    {
+        System.out.print("Enter the lowest count of domains: ");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String input = br.readLine();
+        lowestCount = Integer.parseInt(input);
     }
 
     static String loadSampleFile() throws IOException
@@ -105,7 +119,8 @@ public class Main
         List<Integer> countList = new LinkedList<>();
         for(Integer i : emailMap.values())
         {
-            countList.add(i);
+            if(i >= lowestCount)
+                countList.add(i);
         }
         Collections.sort(countList);
         Collections.reverse(countList);
