@@ -14,8 +14,8 @@ public class Main
     static String filePath = "C:/Work/Training/EmailExtraction";
     static String fileName = "sample.txt";
     static String sub = "@softwire.com";
-    static String softwireRegex = "\\W([A-Za-z\\.'_%\\+-]+@softwire.com)\\W";
-    static String regex = "[A-Za-z\\.'_%\\+-]*@[A-Za-z\\.'_%\\+-]*\\.[A-Za-z.]*";
+    static String softwireRegex = "\\W([A-Za-z\\.'_%\\+-]+@softwire\\.com)\\W";
+    static String regex = "\\W([A-Za-z\\.'_%\\+-]+(@[A-Za-z\\.'_%\\+-]+\\.[A-Za-z.]+))\\W";
 
     static Map<String, Integer> emailMap = new HashMap();
 
@@ -23,9 +23,10 @@ public class Main
     {
         String file = loadSampleFile();
         //int count = countInString(file);
-        int count = countValidSoftwireEmails(file);
-        System.out.println(sub + ": " + count + " times.");
-        //printEmailMap();
+        //int count = countValidSoftwireEmails(file);
+        //System.out.println(sub + ": " + count + " times.");
+        addEmailsToMap(file);
+        printEmailMap();
     }
 
     static String loadSampleFile() throws IOException
@@ -59,8 +60,35 @@ public class Main
         return count;
     }
 
+    static void addEmailsToMap(String file)
+    {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(file);
+        while(!matcher.hitEnd())
+        {
+            if(matcher.find())
+            {
+                String domain = matcher.group(2);
+                if(emailMap.containsKey(domain))
+                {
+                    int value = emailMap.get(domain);
+                    emailMap.remove(domain);
+                    value++;
+                    emailMap.put(domain, value);
+                }
+                else
+                {
+                    emailMap.put(domain, 1);
+                }
+            }
+        }
+    }
+
     static void printEmailMap()
     {
-
+        for(String s : emailMap.keySet())
+        {
+            System.out.println(s + " appears " + emailMap.get(s) + " times.");
+        }
     }
 }
