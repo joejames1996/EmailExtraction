@@ -1,6 +1,5 @@
 package com.company;
 
-import javax.swing.text.html.parser.Parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +15,11 @@ public class Main
     static String filePath = "C:/Work/Training/EmailExtraction";
     static String fileName = "sample.txt";
     static String sub = "@softwire.com";
-    static String softwireRegex = "\\W([A-Za-z\\.'_%\\+-]+@softwire\\.com)\\W";
-    static String regex = "\\W([A-Za-z\\.'_%\\+-]+(@[A-Za-z\\.'_%\\+-]+\\.[A-Za-z.]+))\\W";
+    static String softwireRegex = "\\W([A-Za-z.'_%+-]+@softwire\\.com)\\W";
+    static String regex = "\\W([A-Za-z.'_%+-]+)(@[A-Za-z.'_%+-]+\\.[A-Za-z.]+)\\W";
+    static String regexSameDomain = "\\W([A-Za-z.'_%+-]+)(@([A-Za-z'_%+-]+)\\.[A-Za-z.]+)\\W";
+
+    static int captureGroup = 3;
 
     static Map<String, Integer> emailMap = new HashMap();
 
@@ -32,7 +34,7 @@ public class Main
         //System.out.println(sub + ": " + count + " times.");
         addEmailsToMap(file);
         sortEmailMap();
-        printEmailMap(10);
+        printEmailMap();
     }
 
     static void getLowestCount() throws IOException
@@ -76,13 +78,13 @@ public class Main
 
     static void addEmailsToMap(String file)
     {
-        Pattern pattern = Pattern.compile(regex);
+        Pattern pattern = Pattern.compile(regexSameDomain);
         Matcher matcher = pattern.matcher(file);
         while(!matcher.hitEnd())
         {
             if(matcher.find())
             {
-                String domain = matcher.group(2);
+                String domain = matcher.group(captureGroup);
                 if(emailMap.containsKey(domain))
                 {
                     int value = emailMap.get(domain);
